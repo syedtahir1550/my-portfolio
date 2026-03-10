@@ -227,11 +227,10 @@ function App() {
             </div>
             <div className="metric-card">
               <span className="metric-label">Recent Impact</span>
-              <strong>
-                Delivered AI-powered backend systems supporting Google cloud technical support engineers.
-                <br />
-                Implemented Prefill onboarding feature for USAA, improving customer data retrieval and onboarding efficiency.
-              </strong>
+              <ul className="metric-list">
+                <li>Delivered AI-powered backend systems supporting Google cloud technical support engineers.</li>
+                <li>Implemented the USAA Prefill onboarding feature, improving customer data retrieval and onboarding efficiency.</li>
+              </ul>
             </div>
           </aside>
         </section>
@@ -254,9 +253,11 @@ function App() {
               <span className="mini-title">Snapshot</span>
               <ul className="snapshot-list">
                 <li>4 years of software engineering experience across TCS and Cognizant</li>
+                <li>Computer Science graduate with a strong foundation in core concepts</li>
                 <li>Production experience with Google Gemini AI integrations</li>
                 <li>Hands-on with Spring Boot, Kafka, Spanner, and React</li>
                 <li>Azure AI Engineer and OCI Generative AI certified</li>
+                <li>Leetcode enthusiast with a focus on problem-solving</li>
               </ul>
             </article>
           </div>
