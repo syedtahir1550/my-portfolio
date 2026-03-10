@@ -299,7 +299,6 @@ function App() {
               <article
                 className="timeline-item"
                 data-reveal="up"
-                style={{ transitionDelay: `${index * 90}ms` }}
                 key={`${item.company}-${item.period}`}
               >
                 <div className="timeline-marker" />
