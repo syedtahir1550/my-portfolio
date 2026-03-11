@@ -118,6 +118,8 @@ const certifications = [
 
 function App() {
   const [activeSection, setActiveSection] = useState('about');
+  const [showHeader, setShowHeader] = useState(false);
+  const [showConversationMenu, setShowConversationMenu] = useState(false);
 
   useEffect(() => {
     const elements = document.querySelectorAll('[data-reveal]');
@@ -145,37 +147,58 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const syncHeader = () => {
+      setShowHeader(window.scrollY > 80);
+    };
+
+    syncHeader();
+    window.addEventListener('scroll', syncHeader, { passive: true });
+
+    return () => window.removeEventListener('scroll', syncHeader);
+  }, []);
+
+  useEffect(() => {
+    const handleWindowClick = (event) => {
+      if (!event.target.closest('.conversation-menu')) {
+        setShowConversationMenu(false);
+      }
+    };
+
+    window.addEventListener('click', handleWindowClick);
+
+    return () => window.removeEventListener('click', handleWindowClick);
+  }, []);
+
+  useEffect(() => {
     const sections = navItems
       .map(({ id }) => document.getElementById(id))
       .filter(Boolean);
+    const syncActiveSection = () => {
+      const probeY = window.innerHeight * 0.32;
+      const currentSection =
+        sections.find((section) => {
+          const rect = section.getBoundingClientRect();
+          return rect.top <= probeY && rect.bottom >= probeY;
+        }) ?? sections[0];
 
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        const visibleSection = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visibleSection?.target?.id) {
-          setActiveSection(visibleSection.target.id);
-        }
-      },
-      {
-        threshold: [0.35, 0.6, 0.8],
-        rootMargin: '-20% 0px -45% 0px',
+      if (currentSection?.id) {
+        setActiveSection(currentSection.id);
       }
-    );
+    };
 
-    sections.forEach((section) => sectionObserver.observe(section));
+    syncActiveSection();
+    window.addEventListener('scroll', syncActiveSection, { passive: true });
+    window.addEventListener('resize', syncActiveSection);
 
     return () => {
-      sections.forEach((section) => sectionObserver.unobserve(section));
-      sectionObserver.disconnect();
+      window.removeEventListener('scroll', syncActiveSection);
+      window.removeEventListener('resize', syncActiveSection);
     };
   }, []);
 
   return (
     <div className="page-shell">
-      <header className="site-header">
+      <header className={`site-header ${showHeader ? 'site-header-visible' : 'site-header-hidden'}`}>
         <a className="brand" href="#top">
           <span className="brand-text">
             <strong>Tahiruddin Syed</strong>
@@ -188,6 +211,7 @@ function App() {
               key={item.id}
               className={activeSection === item.id ? 'active' : ''}
               href={`#${item.id}`}
+              onClick={() => setActiveSection(item.id)}
             >
               {item.label}
             </a>
@@ -430,9 +454,32 @@ function App() {
                 </a>
               </div>
             </div>
-            <a className="button primary" href="mailto:syedtahir1550@gmail.com">
-              Start a Conversation
-            </a>
+            <div className="contact-actions conversation-menu">
+              <button
+                className="button primary conversation-toggle"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setShowConversationMenu((current) => !current);
+                }}
+                aria-expanded={showConversationMenu}
+              >
+                Start a Conversation
+              </button>
+              {showConversationMenu ? (
+                <div className="conversation-options">
+                  <a href="mailto:syedtahir1550@gmail.com">Email</a>
+                  <a href="tel:+919848877736">Call</a>
+                  <a
+                    href="https://www.linkedin.com/in/tahiruddin-syed-045a80167/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    LinkedIn
+                  </a>
+                </div>
+              ) : null}
+            </div>
           </div>
         </section>
       </main>
